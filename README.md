@@ -11,7 +11,7 @@ $filename = "Test.zip";
 //Returns the full list of files.
 $files = $mega->node_list();
 
-//This loop is not efficient, done for testing.
+//This loop is not efficient done for testing.
 //Find the file in the array and return its position.
 $x = 0;
 while ($x < count($files['f'])) {
