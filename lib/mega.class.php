@@ -389,6 +389,31 @@ class MEGA {
     }
     return $res;
   }
+  
+  //MichaelRPowell's New Function
+  public function node_public_handle($node) {
+    if (empty($node['h'])) {
+      throw new InvalidArgumentException('Invalid file node handle');
+    }
+
+    $req = array('a' => 'l', 'n' => $node['h']);
+
+    $res = $this->api_req(array($req));
+    if (!$res || !is_array($res)) {
+      return FALSE;
+    }
+
+    $res = array_shift($res);
+    if (isset($res['at'])) {
+      if ($key = $this->node_decrypt_key($node['k'])) {
+        $attr = MEGAUtil::base64_to_str($res['at']);
+        $res['at'] = MEGACrypto::dec_attr($attr, $key);
+      }
+    }
+    return $res;
+  }
+  
+  
 
   /**
    * Download file.
@@ -518,9 +543,19 @@ class MEGA {
    *
    * Enables or disables the public handle for a node.
    */
-  public function node_publish($op) {
-    throw Exception('Not implemented');
+  public function node_publish($files,$number) {
+    $req = array('a' => 'l', 'n' => $files['f'][$number]['h']);
+    $res = $this->api_req(array($req));
+    if (!$res || !is_array($res)) {
+      return FALSE;
+    }
+    $ph = array_shift($res);
+	$key = substr($files['f'][$number]['k'], strpos($files['f'][$number]['k'], ':') + 1);
+	$decrypted_key = MEGAUtil::a32_to_base64(MEGACrypto::decrypt_key($this->u_k_aes, MEGAUtil::base64_to_a32($key)));
+	$url = "http://mega.co.nz/#!".$ph."!".$decrypted_key;
+	return $url;
   }
+  
 
   public function node_unpublish($op) {
     throw Exception('Not implemented');
