@@ -1,6 +1,39 @@
 # Fork Differences
 
-This fork fixes the function node_publish. It should now work if you want to create private download links for files uploaded to your MEGA account.
+This fork fixes the function node_publish. You can use this function to generate private download links for files stored on your MEGA account. node_public_handle was also created to assist with this process, though it was not fully documented when it was written a year ago.
+
+Here is how I implemented the function node_publish:
+
+```php
+//Filename you want publish a link for.
+$filename = "Test.zip";
+
+//Returns the full list of files.
+$files = $mega->node_list();
+
+//This loop is not efficient, done for testing.
+//Find the file in the array and return its position.
+$x = 0;
+while ($x < count($files['f'])) {
+	if (!empty($files['f'][$x]['a']['n'])) {
+		if ($files['f'][$x]['a']['n'] == $filename) {
+			echo "Found: ".$x;
+			$foundnumber = $x;
+		}
+	}
+	$x++;
+}
+
+//Get the publish link, and display.
+echo "<pre>";
+echo "URL: ";
+if (!empty($foundnumber)) {
+	$url = $mega->node_publish($files, $foundnumber);
+	echo $url;
+}
+echo "</pre>";
+```
+
 
 MEGA PHP Client Library
 =======================
