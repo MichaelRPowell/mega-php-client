@@ -1,3 +1,7 @@
+# Fork Differences
+
+This fork fixes the function node_publish. It should now work if you want to create private download links for files uploaded to your MEGA account.
+
 MEGA PHP Client Library
 =======================
 
